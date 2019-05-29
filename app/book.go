@@ -7,25 +7,21 @@ import (
 	"os"
 	"github.com/hydeenoble/mux-rest-api/controller"
 	"github.com/gorilla/handlers"
-
 	"github.com/gorilla/mux"
 )
 
+// App help set the type for the application
 type App struct {
 	Router *mux.Router
 }
 
+// Initialize sets up the routes for the app
 func (a *App) Initialize() {
-	fmt.Println("I am in the run initialize")
-	// var books []controller.Book
-	// books = append(books, controller.Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &controller.Author{Firstname: "John", Lastname: "Doe"}})
-	// books = append(books, controller.Book{ID: "2", Isbn: "433323", Title: "Book Two", Author: &controller.Author{Firstname: "Steve", Lastname: "Smith"}})
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 }
 
 func (a *App) initializeRoutes() {
-	// Route Handlers / Endpoints
 	a.Router.HandleFunc("/api/books", controller.GetBooks).Methods("GET")
 	a.Router.HandleFunc("/api/books/{id}", controller.GetBook).Methods("GET")
 	a.Router.HandleFunc("/api/books", controller.CreateBook).Methods("POST")
