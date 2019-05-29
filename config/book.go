@@ -8,8 +8,8 @@ import (
 )
 
 type Config struct {
-	API      *APIConfig
-	Postgres *PostgresConfig
+	API   *APIConfig
+	Mongo *MongoConfig
 }
 
 type APIConfig struct {
@@ -17,7 +17,7 @@ type APIConfig struct {
 	Port int
 }
 
-type PostgresConfig struct {
+type MongoConfig struct {
 	Username string
 	Password string
 	Host     string
@@ -27,14 +27,14 @@ type PostgresConfig struct {
 
 func GetConfig() *Config {
 	port, portErr := strconv.Atoi(os.Getenv("PORT"))
-	postgresPort, postgresPortErr := strconv.Atoi(os.Getenv("POSTGRES_PORT"))
+	mongoPort, mongoPortErr := strconv.Atoi(os.Getenv("MONGO_PORT"))
 
 	if portErr != nil {
 		log.Fatal(portErr)
 	}
 
-	if postgresPortErr != nil {
-		log.Fatal(postgresPortErr)
+	if mongoPortErr != nil {
+		log.Fatal(mongoPortErr)
 	}
 
 	return &Config{
@@ -42,12 +42,12 @@ func GetConfig() *Config {
 			Name: "Sample Book API In Golang",
 			Port: port,
 		},
-		Postgres: &PostgresConfig{
-			Username: os.Getenv("POSTGRES_USER"),
-			Password: os.Getenv("POSTGRES_PASSWORD"),
-			Host:     os.Getenv("POSTGRES_HOST"),
-			DbName:   os.Getenv("POSTGRES_DB"),
-			Port:     postgresPort,
+		Mongo: &MongoConfig{
+			Username: os.Getenv("MONGO_USER"),
+			Password: os.Getenv("MONGO_PASSWORD"),
+			Host:     os.Getenv("MONGO_HOST"),
+			DbName:   os.Getenv("MONGO_DB"),
+			Port:     mongoPort,
 		},
 	}
 }
