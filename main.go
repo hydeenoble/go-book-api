@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/hydeenoble/mux-rest-api/app"
 	"encoding/json"
-	"log"
 	"net/http"
 	"math/rand"
 	"strconv"
@@ -88,6 +88,8 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// testing external function
+	app := &app.App{}
 	// Init Router
 	r := mux.NewRouter()
 
@@ -96,13 +98,9 @@ func main() {
 	books = append(books, Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}})
 	books = append(books, Book{ID: "2", Isbn: "433323", Title: "Book Two", Author: &Author{Firstname: "Steve", Lastname: "Smith"}})
 
-	// Route Handlers / Endpoints
-	r.HandleFunc("/api/books", getBooks).Methods("GET")
-	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
-	r.HandleFunc("/api/books", createBook).Methods("POST")
-	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
-	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
+	
 
-	log.Fatal(http.ListenAndServe(":8000", r))
+	// log.Fatal(http.ListenAndServe(":8000", r))
+	app.Run(8000)
 
 }
