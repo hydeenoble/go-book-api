@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/hydeenoble/mux-rest-api/app"
 	"github.com/hydeenoble/mux-rest-api/config"
-	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {

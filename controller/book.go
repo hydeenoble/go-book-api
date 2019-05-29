@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/hydeenoble/mux-rest-api/model"
 )
 
 // Book Struct (Model)
@@ -27,7 +28,8 @@ type Author struct {
 
 var books []Book
 
-func init(){
+func init() {
+	model.GetBooks()
 	books = append(books, Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}})
 	books = append(books, Book{ID: "2", Isbn: "433323", Title: "Book Two", Author: &Author{Firstname: "Steve", Lastname: "Smith"}})
 }

@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type Config struct {
@@ -26,10 +27,6 @@ type PostgresConfig struct {
 
 func GetConfig() *Config {
 	port, portErr := strconv.Atoi(os.Getenv("PORT"))
-	postgresUsername := os.Getenv("POSTGRES_USER")
-	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
-	postgresHost := os.Getenv("POSTGRES_HOST")
-	postgresDbName := os.Getenv("POSTGRES_DB")
 	postgresPort, postgresPortErr := strconv.Atoi(os.Getenv("POSTGRES_PORT"))
 
 	if portErr != nil {
@@ -46,10 +43,10 @@ func GetConfig() *Config {
 			Port: port,
 		},
 		Postgres: &PostgresConfig{
-			Username: postgresUsername,
-			Password: postgresPassword,
-			Host:     postgresHost,
-			DbName:   postgresDbName,
+			Username: os.Getenv("POSTGRES_USER"),
+			Password: os.Getenv("POSTGRES_PASSWORD"),
+			Host:     os.Getenv("POSTGRES_HOST"),
+			DbName:   os.Getenv("POSTGRES_DB"),
 			Port:     postgresPort,
 		},
 	}
