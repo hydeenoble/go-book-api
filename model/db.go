@@ -7,14 +7,10 @@ import (
 	"time"
 
 	"github.com/hydeenoble/mux-rest-api/config"
-	_ "github.com/lib/pq"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
-
-// var db *sql.DB
-// var err error
 
 var (
 	host     = config.GetConfig().Mongo.Host
@@ -24,10 +20,14 @@ var (
 	dbname   = config.GetConfig().Mongo.DbName
 )
 
+var (
+	booksCollection *mongo.Collection
+)
+
 func init() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s@%s:%d/%s", user, password, host, port, dbname)))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,17 +35,11 @@ func init() {
 	defer cancel()
 	err = client.Ping(ctx, readpref.Primary())
 
-	// psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	// db, err = sql.Open("postgres", psqlInfo)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer db.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// err = db.Ping()
-	// if err != nil {
-	// 	panic(err)
-	// }
+	booksCollection = client.Database(dbname).Collection("books")
 
 	fmt.Println("Successfully connected!")
 }

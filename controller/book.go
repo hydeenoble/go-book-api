@@ -29,7 +29,6 @@ type Author struct {
 var books []Book
 
 func init() {
-	model.GetBooks()
 	books = append(books, Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}})
 	books = append(books, Book{ID: "2", Isbn: "433323", Title: "Book Two", Author: &Author{Firstname: "Steve", Lastname: "Smith"}})
 }
@@ -57,11 +56,9 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 //Create a New Book
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var book Book
+	var book model.Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
-	book.ID = strconv.Itoa(rand.Intn(10000000))
-	books = append(books, book)
-	json.NewEncoder(w).Encode(book)
+	json.NewEncoder(w).Encode(model.CreateBook(book))
 }
 
 // Update a Book

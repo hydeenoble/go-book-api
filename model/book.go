@@ -1,6 +1,11 @@
 package model
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+	"log"
+	"time"
+)
 
 // Book Struct (Model)
 type Book struct {
@@ -16,11 +21,22 @@ type Author struct {
 	Lastname  string `json:"lastname"`
 }
 
+func init() {
+}
+
 func GetBooks() {
+	books := Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}}
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	res, _ := booksCollection.InsertOne(ctx, books)
+	fmt.Println(res.InsertedID)
 	fmt.Println("I am in the model")
 }
 
-func CreateBook(book *Book){
-	fmt.Println("I am in the model => CreateBook method")
-	fmt.Println(book)
+func CreateBook(book Book) Book {
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	_, err := booksCollection.InsertOne(ctx, book)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return book
 }
