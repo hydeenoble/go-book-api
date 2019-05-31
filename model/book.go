@@ -5,12 +5,11 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/hydeenoble/mux-rest-api/schema"
 	"go.mongodb.org/mongo-driver/bson"
 )
-
-func init() {
-}
 
 func GetBooks() []*schema.Book {
 	// books := Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}}
@@ -53,4 +52,24 @@ func CreateBook(book schema.Book) schema.Book {
 		log.Fatal(err)
 	}
 	return book
+}
+
+func GetBook(id string) schema.Book {
+	var book schema.Book
+
+	_id, _ := primitive.ObjectIDFromHex(id)
+
+	filter := bson.D{{"_id", _id}}
+
+	err := booksCollection.FindOne(context.Background(), filter).Decode(&book)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return book
+}
+
+
+func DeleteBook() {
+	
 }

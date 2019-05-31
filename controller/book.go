@@ -7,6 +7,7 @@ import (
 	// "strconv"
 
 	// "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 	"github.com/hydeenoble/mux-rest-api/model"
 	"github.com/hydeenoble/mux-rest-api/schema"
 )
@@ -28,16 +29,9 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 
 // Get single Book
 func GetBook(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/json")
-	// params := mux.Vars(r) // Get Params
-	// // Loop through books and find with ID
-	// for _, book := range books {
-	// 	if book.ID == params["id"] {
-	// 		json.NewEncoder(w).Encode(book)
-	// 		return
-	// 	}
-	// }
-	// json.NewEncoder(w).Encode(&Book{})
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r) // Get Params
+	json.NewEncoder(w).Encode(model.GetBook(params["id"]))
 }
 
 //Create a New Book
