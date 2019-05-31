@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -61,7 +62,8 @@ func GetBook(id string) schema.Book {
 
 	filter := bson.D{{"_id", _id}}
 
-	err := booksCollection.FindOne(context.Background(), filter).Decode(&book)
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	err := booksCollection.FindOne(ctx, filter).Decode(&book)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,7 +71,26 @@ func GetBook(id string) schema.Book {
 	return book
 }
 
+func DeleteBook(id string) string {
+	fmt.Println(id)
+	_id, _ := primitive.ObjectIDFromHex(id)
 
-func DeleteBook() {
+	filter := bson.D{{"_id", _id}}
+
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	res, err := booksCollection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if res.DeletedCount == 1 {
+		return "Book successfully deleted!"
+	}else if res.DeletedCount == 0 {
+		return "Book with id: " + id + "does not exist!"
+	} else {
+		return "Something wenr wrong somewhere."
+	}
 	
+	// fmt.Println(res)
+	// fmt.Printf("%+v\n", res)
 }
