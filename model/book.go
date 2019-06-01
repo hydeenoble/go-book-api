@@ -11,8 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// GetBooks - gets all books from the DB
 func GetBooks() []*schema.Book {
-	// books := Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}}
 	var books []*schema.Book
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -45,8 +45,10 @@ func GetBooks() []*schema.Book {
 	return books
 }
 
+// CreateBook - Creates a new book in the DB
 func CreateBook(book schema.Book) schema.Book {
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	res, err := booksCollection.InsertOne(ctx, book)
 	if err != nil {
 		log.Fatal(err)
@@ -55,6 +57,7 @@ func CreateBook(book schema.Book) schema.Book {
 	return book
 }
 
+// GetBook - gets a single Book from the DB corresponding to the ID speciffied
 func GetBook(id string) schema.Book {
 	var book schema.Book
 
@@ -62,7 +65,8 @@ func GetBook(id string) schema.Book {
 
 	filter := bson.D{{"_id", _id}}
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	err := booksCollection.FindOne(ctx, filter).Decode(&book)
 	if err != nil {
 		log.Fatal(err)
@@ -71,12 +75,14 @@ func GetBook(id string) schema.Book {
 	return book
 }
 
+// DeleteBook - Deletes an exisiting Book in the DB
 func DeleteBook(id string) string {
 	_id, _ := primitive.ObjectIDFromHex(id)
 
 	filter := bson.D{{"_id", _id}}
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	res, err := booksCollection.DeleteOne(ctx, filter)
 	if err != nil {
 		log.Fatal(err)
@@ -89,11 +95,9 @@ func DeleteBook(id string) string {
 	} else {
 		return "Something wenr wrong somewhere."
 	}
-
-	// fmt.Println(res)
-	// fmt.Printf("%+v\n", res)
 }
 
+// UpdateBook - updates an existing Book in the DB
 func UpdateBook(id string, book schema.Book) schema.Book {
 	_id, _ := primitive.ObjectIDFromHex(id)
 
@@ -108,7 +112,8 @@ func UpdateBook(id string, book schema.Book) schema.Book {
 			},
 		},
 	}
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	res, err := booksCollection.UpdateOne(ctx, filter, update)
 
 	if err != nil {
@@ -117,7 +122,7 @@ func UpdateBook(id string, book schema.Book) schema.Book {
 	if res.MatchedCount == 1 {
 		book.ID = _id
 		return book
-	} else {
-		return schema.Book{}
 	}
+	return schema.Book{}
+
 }
