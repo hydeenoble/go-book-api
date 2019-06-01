@@ -2,7 +2,6 @@ package model
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -48,10 +47,11 @@ func GetBooks() []*schema.Book {
 
 func CreateBook(book schema.Book) schema.Book {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	_, err := booksCollection.InsertOne(ctx, book)
+	res, err := booksCollection.InsertOne(ctx, book)
 	if err != nil {
 		log.Fatal(err)
 	}
+	book.ID, _ = primitive.ObjectIDFromHex(res.InsertedID.(primitive.ObjectID).Hex())
 	return book
 }
 
@@ -72,7 +72,6 @@ func GetBook(id string) schema.Book {
 }
 
 func DeleteBook(id string) string {
-	fmt.Println(id)
 	_id, _ := primitive.ObjectIDFromHex(id)
 
 	filter := bson.D{{"_id", _id}}
@@ -85,12 +84,40 @@ func DeleteBook(id string) string {
 
 	if res.DeletedCount == 1 {
 		return "Book successfully deleted!"
-	}else if res.DeletedCount == 0 {
+	} else if res.DeletedCount == 0 {
 		return "Book with id: " + id + "does not exist!"
 	} else {
 		return "Something wenr wrong somewhere."
 	}
-	
+
 	// fmt.Println(res)
 	// fmt.Printf("%+v\n", res)
+}
+
+func UpdateBook(id string, book schema.Book) schema.Book {
+	_id, _ := primitive.ObjectIDFromHex(id)
+
+	filter := bson.D{{"_id", _id}}
+	update := bson.M{
+		"$set": bson.M{
+			"title": book.Title,
+			"isbn":  book.Isbn,
+			"author": bson.M{
+				"firstname": book.Author.Firstname,
+				"lastname":  book.Author.Lastname,
+			},
+		},
+	}
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	res, err := booksCollection.UpdateOne(ctx, filter, update)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	if res.MatchedCount == 1 {
+		book.ID = _id
+		return book
+	} else {
+		return schema.Book{}
+	}
 }
