@@ -2,93 +2,45 @@ package controller
 
 import (
 	"encoding/json"
-	"math/rand"
 	"net/http"
-	"strconv"
-
 	"github.com/gorilla/mux"
+	"github.com/hydeenoble/mux-rest-api/model"
+	"github.com/hydeenoble/mux-rest-api/schema"
 )
 
-// Book Struct (Model)
-type Book struct {
-	ID     string  `json:"id"`
-	Isbn   string  `json:"isbn"`
-	Title  string  `json:"title"`
-	Author *Author `json:"author"`
-}
-
-// Author Struct
-type Author struct {
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-}
-
-// Init books var as a slice Book Struct
-
-var books []Book
-
-func init(){
-	books = append(books, Book{ID: "1", Isbn: "448743", Title: "Book One", Author: &Author{Firstname: "John", Lastname: "Doe"}})
-	books = append(books, Book{ID: "2", Isbn: "433323", Title: "Book Two", Author: &Author{Firstname: "Steve", Lastname: "Smith"}})
-}
-
-// Get All Books
+// GetBooks - gets all books from the DB
 func GetBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(books)
+	json.NewEncoder(w).Encode(model.GetBooks())
 }
 
-// Get single Book
+// GetBook - gets a single Book from the DB corresponding to the ID speciffied
 func GetBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r) // Get Params
-	// Loop through books and find with ID
-	for _, book := range books {
-		if book.ID == params["id"] {
-			json.NewEncoder(w).Encode(book)
-			return
-		}
-	}
-	json.NewEncoder(w).Encode(&Book{})
+	json.NewEncoder(w).Encode(model.GetBook(params["id"]))
 }
 
-//Create a New Book
+// CreateBook - Creates a new book in the DB
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var book Book
+	var book schema.Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
-	book.ID = strconv.Itoa(rand.Intn(10000000))
-	books = append(books, book)
-	json.NewEncoder(w).Encode(book)
+	json.NewEncoder(w).Encode(model.CreateBook(book))
 }
 
-// Update a Book
+// UpdateBook - updates an existing Book in the DB
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	for index, item := range books {
-		if item.ID == params["id"] {
-			books = append(books[:index], books[index+1:]...)
-			var book Book
-			_ = json.NewDecoder(r.Body).Decode(&book)
-			book.ID = strconv.Itoa(rand.Intn(10000000))
-			books = append(books, book)
-			json.NewEncoder(w).Encode(book)
-			return
-		}
-	}
-	json.NewEncoder(w).Encode(books)
+	var book schema.Book
+	_ = json.NewDecoder(r.Body).Decode(&book)
+	json.NewEncoder(w).Encode(model.UpdateBook(params["id"], book))
 }
 
-// Delete a Book
+// DeleteBook - Deletes an exisiting Book in the DB
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	for index, item := range books {
-		if item.ID == params["id"] {
-			books = append(books[:index], books[index+1:]...)
-			break
-		}
-	}
-	json.NewEncoder(w).Encode(books)
+	json.NewEncoder(w).Encode(model.DeleteBook(params["id"]))
 }
