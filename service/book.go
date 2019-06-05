@@ -94,9 +94,6 @@ func UpdateBook(id string, book model.Book) model.Book {
 			},
 		},
 	}
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
-	// res, err := booksCollection.UpdateOne(ctx, filter, update)
 
 	res, err := model.UpdateOne(filter, update)
 
