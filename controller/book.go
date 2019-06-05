@@ -32,11 +32,11 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 
 // UpdateBook - updates an existing Book in the DB
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/json")
-	// params := mux.Vars(r)
-	// var book schema.Book
-	// _ = json.NewDecoder(r.Body).Decode(&book)
-	// json.NewEncoder(w).Encode(model.UpdateBook(params["id"], book))
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var book model.Book
+	_ = json.NewDecoder(r.Body).Decode(&book)
+	json.NewEncoder(w).Encode(service.UpdateBook(params["id"], book))
 }
 
 // DeleteBook - Deletes an exisiting Book in the DB

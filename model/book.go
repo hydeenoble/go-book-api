@@ -34,4 +34,8 @@ func DeleteOne(filter bson.D) (*mongo.DeleteResult, error) {
 	return booksCollection.DeleteOne(ctx, filter)
 }
 
-func UpdateOne() {}
+func UpdateOne(filter bson.D, update bson.M) (*mongo.UpdateResult, error){
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return booksCollection.UpdateOne(ctx, filter, update)
+}

@@ -79,32 +79,34 @@ func DeleteBook(id string) string {
 	}
 }
 
-// // UpdateBook - updates an existing Book in the DB
-// func UpdateBook(id string, book schema.Book) schema.Book {
-// 	_id, _ := primitive.ObjectIDFromHex(id)
+// UpdateBook - updates an existing Book in the DB
+func UpdateBook(id string, book model.Book) model.Book {
+	_id, _ := primitive.ObjectIDFromHex(id)
 
-// 	filter := bson.D{{"_id", _id}}
-// 	update := bson.M{
-// 		"$set": bson.M{
-// 			"title": book.Title,
-// 			"isbn":  book.Isbn,
-// 			"author": bson.M{
-// 				"firstname": book.Author.Firstname,
-// 				"lastname":  book.Author.Lastname,
-// 			},
-// 		},
-// 	}
-// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-// 	defer cancel()
-// 	res, err := booksCollection.UpdateOne(ctx, filter, update)
+	filter := bson.D{{"_id", _id}}
+	update := bson.M{
+		"$set": bson.M{
+			"title": book.Title,
+			"isbn":  book.Isbn,
+			"author": bson.M{
+				"firstname": book.Author.Firstname,
+				"lastname":  book.Author.Lastname,
+			},
+		},
+	}
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancel()
+	// res, err := booksCollection.UpdateOne(ctx, filter, update)
 
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	if res.MatchedCount == 1 {
-// 		book.ID = _id
-// 		return book
-// 	}
-// 	return schema.Book{}
+	res, err := model.UpdateOne(filter, update)
 
-// }
+	if err != nil {
+		log.Fatal(err)
+	}
+	if res.MatchedCount == 1 {
+		book.ID = _id
+		return book
+	}
+	return model.Book{}
+
+}
