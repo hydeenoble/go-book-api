@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/hydeenoble/mux-rest-api/model"
 	"github.com/hydeenoble/mux-rest-api/service"
 )
 
@@ -23,10 +24,10 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 
 // CreateBook - Creates a new book in the DB
 func CreateBook(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/json")
-	// var book schema.Book
-	// _ = json.NewDecoder(r.Body).Decode(&book)
-	// json.NewEncoder(w).Encode(model.CreateBook(book))
+	w.Header().Set("Content-Type", "application/json")
+	var book model.Book
+	_ = json.NewDecoder(r.Body).Decode(&book)
+	json.NewEncoder(w).Encode(service.CreateBook(book))
 }
 
 // UpdateBook - updates an existing Book in the DB
