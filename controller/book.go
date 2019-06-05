@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/hydeenoble/mux-rest-api/service"
 )
 
@@ -15,9 +16,9 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 
 // GetBook - gets a single Book from the DB corresponding to the ID speciffied
 func GetBook(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/json")
-	// params := mux.Vars(r) // Get Params
-	// json.NewEncoder(w).Encode(model.GetBook(params["id"]))
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r) // Get Params
+	json.NewEncoder(w).Encode(service.GetBook(params["id"]))
 }
 
 // CreateBook - Creates a new book in the DB

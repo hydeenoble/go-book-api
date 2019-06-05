@@ -1,14 +1,11 @@
 package service
 
 import (
-	"context"
 	"log"
-	"time"
 
 	"github.com/hydeenoble/mux-rest-api/model"
-	"github.com/hydeenoble/mux-rest-api/schema"
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // GetBooks - gets all books from the DB
@@ -41,33 +38,24 @@ func GetBooks() []*model.Book {
 	return books
 }
 
-// // CreateBook - Creates a new book in the DB
-// func CreateBook(book schema.Book) schema.Book {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-// 	defer cancel()
-// 	res, err := booksCollection.InsertOne(ctx, book)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	book.ID, _ = primitive.ObjectIDFromHex(res.InsertedID.(primitive.ObjectID).Hex())
-// 	return book
-// }
-
-// GetBook - gets a single Book from the DB corresponding to the ID speciffied
-func GetBook(id string) model.Book {
-	var book model.Book
-
-	_id, _ := primitive.ObjectIDFromHex(id)
-
-	filter := bson.D{{"_id", _id}}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	err := booksCollection.FindOne(ctx, filter).Decode(&book)
+// CreateBook - Creates a new book in the DB
+func CreateBook(book model.Book) model.Book {
+	res, err := model.InsertOne(book)
 	if err != nil {
 		log.Fatal(err)
 	}
+	book.ID, _ = primitive.ObjectIDFromHex(res.InsertedID.(primitive.ObjectID).Hex())
+	return book
+}
 
+// GetBook - gets a single Book from the DB corresponding to the ID speciffied
+func GetBook(id string) model.Book {
+	_id, _ := primitive.ObjectIDFromHex(id)
+	filter := bson.D{{"_id", _id}}
+	book, err := model.FindOne(filter)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return book
 }
 
