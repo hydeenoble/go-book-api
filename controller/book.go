@@ -41,7 +41,7 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 
 // DeleteBook - Deletes an exisiting Book in the DB
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/json")
-	// params := mux.Vars(r)
-	// json.NewEncoder(w).Encode(model.DeleteBook(params["id"]))
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	json.NewEncoder(w).Encode(service.DeleteBook(params["id"]))
 }

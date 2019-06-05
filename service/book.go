@@ -59,27 +59,25 @@ func GetBook(id string) model.Book {
 	return book
 }
 
-// // DeleteBook - Deletes an exisiting Book in the DB
-// func DeleteBook(id string) string {
-// 	_id, _ := primitive.ObjectIDFromHex(id)
+// DeleteBook - Deletes an exisiting Book in the DB
+func DeleteBook(id string) string {
+	_id, _ := primitive.ObjectIDFromHex(id)
 
-// 	filter := bson.D{{"_id", _id}}
+	filter := bson.D{{"_id", _id}}
 
-// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-// 	defer cancel()
-// 	res, err := booksCollection.DeleteOne(ctx, filter)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	res, err := model.DeleteOne(filter)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	if res.DeletedCount == 1 {
-// 		return "Book successfully deleted!"
-// 	} else if res.DeletedCount == 0 {
-// 		return "Book with id: " + id + "does not exist!"
-// 	} else {
-// 		return "Something wenr wrong somewhere."
-// 	}
-// }
+	if res.DeletedCount == 1 {
+		return "Book successfully deleted!"
+	} else if res.DeletedCount == 0 {
+		return "Book with id: " + id + "does not exist!"
+	} else {
+		return "Something wenr wrong somewhere."
+	}
+}
 
 // // UpdateBook - updates an existing Book in the DB
 // func UpdateBook(id string, book schema.Book) schema.Book {
